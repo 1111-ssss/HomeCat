@@ -20,7 +20,7 @@ public class AuthLoginHandler : IHandler<AuthLoginRequest, JwtTokenResponse>
         _passwordHashingService = passwordHashingService;
     }
 
-    public async Task<Result<JwtTokenResponse>> Handle(AuthLoginRequest request)
+    public async Task<Result<JwtTokenResponse>> Handle(AuthLoginRequest request, CancellationToken ct)
     {
         var hashResult = _passwordHashingService.HashPassword(request.Password);
         if (!hashResult.IsSuccess)

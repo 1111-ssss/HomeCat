@@ -26,10 +26,11 @@ public static class AuthEndpoints
     }
     private static async Task<IResult> LoginAsync(
         [FromServices] AuthLoginHandler handler,
-        [FromBody] AuthLoginRequest request
+        [FromBody] AuthLoginRequest request,
+        CancellationToken ct
     )
     {
-        var result = await handler.Handle(request);
+        var result = await handler.Handle(request, ct);
 
         return result.ToApiResult();
     }

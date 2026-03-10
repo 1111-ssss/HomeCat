@@ -1,6 +1,5 @@
 using Application.Handlers.Auth.Common;
 using Application.Interfaces.Common;
-using Domain.Model.Result;
 
 namespace Application.Handlers.Auth.Login;
 
