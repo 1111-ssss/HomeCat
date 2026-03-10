@@ -6,7 +6,7 @@ using Application.Interfaces.Auth;
 
 namespace Infrastructure.Services.Auth;
 
-public sealed class PasswordHasherService : IPasswordHashingService
+public sealed class PasswordHashingService : IPasswordHashingService
 {
     private const int SaltLength = 16;
     private const int HashLength = 32;
