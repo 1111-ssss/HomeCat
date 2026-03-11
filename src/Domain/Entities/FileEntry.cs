@@ -12,6 +12,8 @@ public class FileEntry
     public string ContentType { get; set; } = default!;
     [MaxLength(255)]
     public string Path { get; set; } = default!;
+    [MaxLength(16)]
+    public Guid FileUrl { get; set; } = default!;
 
     public User UploadedBy { get; set; } = default!;
 }
