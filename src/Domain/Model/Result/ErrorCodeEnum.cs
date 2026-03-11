@@ -42,6 +42,8 @@ public enum ErrorCode
     [HttpStatusCode(500)]
     InternalServerError,
     [HttpStatusCode(500)]
+    NotFoundOnServer,
+    [HttpStatusCode(500)]
     DatabaseError,
     [HttpStatusCode(500)]
     UnknownError,
@@ -49,4 +51,6 @@ public enum ErrorCode
     TokenGenerationError,
     [HttpStatusCode(500)]
     NoPasswordHash,
+    [HttpStatusCode(500)]
+    UploadingFileError,
 }
