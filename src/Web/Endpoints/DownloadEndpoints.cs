@@ -10,6 +10,7 @@ public static class DownloadEndpoints
     public static IEndpointRouteBuilder MapDownloadEndpoints(this IEndpointRouteBuilder app)
     {
         var group = app.MapGroup("/api/download")
+            .RequireRateLimiting("StrictLimiter")
             .WithTags("Загрузка");
 
         group.MapGet("/get", GetFileAsync)
