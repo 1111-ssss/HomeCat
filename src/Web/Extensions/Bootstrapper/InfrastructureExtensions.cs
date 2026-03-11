@@ -23,6 +23,9 @@ public static class InfrastructureExtensions
         //Repositories
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IFileEntryRepository, FileEntryRepository>();
+        
+        // AdminInitializer
+        services.AddScoped<AdminInitializer>();
 
         return services;
     }

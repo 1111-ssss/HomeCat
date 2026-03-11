@@ -29,4 +29,10 @@ app.MapStaticAssets();
 app.MapRazorPages()
     .WithStaticAssets();
 
+using (var scope = app.Services.CreateScope())
+{
+    var adminInitializer = scope.ServiceProvider.GetRequiredService<Infrastructure.Services.Auth.AdminInitializer>();
+    await adminInitializer.InitializeAsync();
+}
+
 app.Run();
