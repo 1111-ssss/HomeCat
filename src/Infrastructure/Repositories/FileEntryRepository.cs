@@ -29,11 +29,33 @@ public class FileEntryRepository : IFileEntryRepository
         var sql = "SELECT * FROM FileEntries WHERE Id = @Id";
         return await connection.QuerySingleOrDefaultAsync<FileEntry>(sql, new { Id = id });
     }
-    public async Task<FileEntry?> GetBy(int id)
+    public async Task<IEnumerable<FileEntry>> GetAllWithPagination(int page, int pageSize)
     {
         using var connection = new SqliteConnection(_connectionString);
-        var sql = "SELECT * FROM FileEntries WHERE Id = @Id";
-        return await connection.QuerySingleOrDefaultAsync<FileEntry>(sql, new { Id = id });
+        var offset = (page - 1) * pageSize;
+        var sql = @"SELECT * FROM FileEntries LIMIT @PageSize OFFSET @Offset";
+        return await connection.QueryAsync<FileEntry>(sql, new { PageSize = pageSize, Offset = offset });
+    }
+    public async Task<IEnumerable<FileEntry>> GetAllWithPagination(string? search, int page, int pageSize)
+    {
+        if (string.IsNullOrEmpty(search))
+            return await GetAllWithPagination(page, pageSize);
+            
+        using var connection = new SqliteConnection(_connectionString);
+        var offset = (page - 1) * pageSize;
+        
+        var searchPattern = string.IsNullOrEmpty(search) ? "" : search;
+        var sql = @"SELECT * FROM FileEntries 
+                    WHERE FileName LIKE '%' || @Search || '%' 
+                    LIMIT @PageSize OFFSET @Offset";
+
+        return await connection.QueryAsync<FileEntry>(sql, new 
+            { 
+                Search = searchPattern, 
+                PageSize = pageSize, 
+                Offset = offset 
+            }
+        );
     }
     public async Task<FileEntry?> GetByFileUrl(string url)
     {
