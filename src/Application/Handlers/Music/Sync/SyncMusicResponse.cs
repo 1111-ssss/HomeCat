@@ -7,5 +7,5 @@ public record SyncMusicResponse(
     double Duration,
     double Position,
     MusicFile File,
-    DateTimeOffset ServerTimestamp
+    DateTime ServerTimestamp
 );
