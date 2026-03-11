@@ -2,6 +2,7 @@ using Application.DTOs.Auth;
 using Application.Handlers.Auth.Common;
 using Application.Interfaces.Auth;
 using Application.Interfaces.Common;
+using Application.Interfaces.Repositories;
 using Domain.Model.Result;
 
 namespace Application.Handlers.Auth.Login;
@@ -10,14 +11,17 @@ public class AuthLoginHandler : IHandler<AuthLoginRequest, JwtTokenResponse>
 {
     private readonly IJwtGeneratorService _jwtGeneratorService;
     private readonly IPasswordHashingService _passwordHashingService;
+    private readonly IUserRepository _userRepository;
 
     public AuthLoginHandler(
         IJwtGeneratorService jwtGeneratorService,
-        IPasswordHashingService passwordHashingService
+        IPasswordHashingService passwordHashingService,
+        IUserRepository userRepository
     )
     {
         _jwtGeneratorService = jwtGeneratorService;
         _passwordHashingService = passwordHashingService;
+        _userRepository = userRepository;
     }
 
     public async Task<Result<JwtTokenResponse>> Handle(AuthLoginRequest request, CancellationToken ct)
@@ -26,14 +30,16 @@ public class AuthLoginHandler : IHandler<AuthLoginRequest, JwtTokenResponse>
         if (!hashResult.IsSuccess)
             return Result<JwtTokenResponse>.Failed(hashResult.Error!.Value, hashResult.Message, hashResult.Details);
 
-        if (request.Username != "admin" && request.Password != "admin")
+        var userResult = await _userRepository.GetByUsernameAsync(request.Username);
+        if (userResult == null)
             return Result<JwtTokenResponse>.Failed(ErrorCode.InvalidUsernameOrPassword, "Неверное имя пользователя или пароль");
 
-        //get from db
         var token = _jwtGeneratorService.GenerateToken(new GenerateTokenDTO(
-            1,
+            userResult.Id,
             request.Username,
-            "Admin"
+            userResult.IsAdmin
+                ? "Admin"
+                : "User"
         ));
         if (token == null)
             return Result<JwtTokenResponse>.Failed(ErrorCode.InternalServerError, "Ошибка генерации токена");
