@@ -1,0 +1,9 @@
+version: '3.9'
+
+services:
+  homecat:
+    build: .
+    image: homecat-app-image
+    container_name: homecat-container
+    ports:
+      - 8080:8080
