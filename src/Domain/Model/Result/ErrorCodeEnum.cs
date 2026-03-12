@@ -13,6 +13,10 @@ public enum ErrorCode
     InvalidUsername,
     [HttpStatusCode(400)]
     InvalidUsernameOrPassword,
+    [HttpStatusCode(400)]
+    WrongFileType,
+    [HttpStatusCode(400)]
+    CorruptedFile,
 
     //Ошибки авторизации (401 Unauthorized)
     [HttpStatusCode(401)]
