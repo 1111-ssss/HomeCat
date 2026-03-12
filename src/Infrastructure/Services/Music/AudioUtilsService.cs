@@ -17,7 +17,7 @@ public class AudioUtilsService : IAudioUtilsService
             return Result.Failed(ErrorCode.WrongFileType, "Путь к файлу не указан");
         }
 
-        if (!Path.Exists(path))
+        if (!System.IO.File.Exists(path))
         {
             return Result.Failed(ErrorCode.NotFoundOnServer, "Файл не найден");
         }

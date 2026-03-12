@@ -1,4 +1,5 @@
 using API.Extensions.Bootstrapper;
+using Infrastructure.Services.Init;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +10,12 @@ builder.Services.AddInfrastructure();
 builder.Services.AddAuthServices(builder.Configuration);
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var initializer = scope.ServiceProvider.GetRequiredService<DataBaseInitializer>();
+    await initializer.InitializeAsync();
+}
 
 if (!app.Environment.IsDevelopment())
 {
@@ -28,11 +35,5 @@ app.MapEndpoints();
 app.MapStaticAssets();
 app.MapRazorPages()
     .WithStaticAssets();
-
-using (var scope = app.Services.CreateScope())
-{
-    var adminInitializer = scope.ServiceProvider.GetRequiredService<Infrastructure.Services.Auth.AdminInitializer>();
-    await adminInitializer.InitializeAsync();
-}
 
 app.Run();

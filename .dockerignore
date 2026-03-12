@@ -1,0 +1,14 @@
+bin/
+obj/
+*.user
+*.suo
+*.log
+.vs/
+.vscode/
+**/Debug/
+**/Release/
+node_modules/
+test-results/
+.git/
+Dockerfile
+README.md

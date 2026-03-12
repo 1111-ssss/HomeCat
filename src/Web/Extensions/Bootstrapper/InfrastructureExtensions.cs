@@ -5,6 +5,7 @@ using Application.Interfaces.Repositories;
 using Infrastructure.Repositories;
 using Infrastructure.Services.Auth;
 using Infrastructure.Services.Download;
+using Infrastructure.Services.Init;
 using Infrastructure.Services.Music;
 
 namespace API.Extensions.Bootstrapper;
@@ -32,7 +33,7 @@ public static class InfrastructureExtensions
         services.AddScoped<IFileEntryRepository, FileEntryRepository>();
         
         // AdminInitializer
-        services.AddScoped<AdminInitializer>();
+        services.AddScoped<DataBaseInitializer>();
 
         return services;
     }
