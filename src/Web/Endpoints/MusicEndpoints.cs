@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Domain.Model.Result;
 using Application.Handlers.Music.Sync;
 using Application.Handlers.Music.GetAllMusic;
+using Application.Handlers.Music.PlayRadio;
 
 namespace API.Endpoints;
 
@@ -30,6 +31,15 @@ public static class MusicEndpoints
             .Produces<ErrorResponse>(StatusCodes.Status400BadRequest)
             .Produces<ErrorResponse>(StatusCodes.Status500InternalServerError);
 
+        group.MapGet("/play", PlayRadioAsync)
+            .WithName("PlayMusic")
+            .WithSummary("Проигрывание музыки")
+            .WithDescription("Позволяет пользователю проиграть музыку из списка загруженных на сервере")
+            .Accepts<PlayRadioRequest>("application/json")
+            .Produces<PlayRadioResponse>(StatusCodes.Status200OK)
+            .Produces<ErrorResponse>(StatusCodes.Status400BadRequest)
+            .Produces<ErrorResponse>(StatusCodes.Status500InternalServerError);
+
         return group;
     }
     private static async Task<IResult> SyncAsync(
@@ -45,6 +55,16 @@ public static class MusicEndpoints
     private static async Task<IResult> SearchAsync(
         [FromServices] GetAllMusicHandler handler,
         [FromBody] GetAllMusicRequest request,
+        CancellationToken ct
+    )
+    {
+        var result = await handler.Handle(request, ct);
+
+        return result.ToApiResult();
+    }
+    private static async Task<IResult> PlayRadioAsync(
+        [FromServices] PlayRadioHandler handler,
+        [FromBody] PlayRadioRequest request,
         CancellationToken ct
     )
     {
