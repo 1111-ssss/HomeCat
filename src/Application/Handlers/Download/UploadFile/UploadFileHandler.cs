@@ -39,6 +39,9 @@ public class UploadFileHandler : IHandler<UploadFileRequest, FileResponse>
             FileName = request.File.FileName,
             ContentType = request.File.ContentType,
             Path = saveResult.Value,
+            FileType = "Music",
+            Size = (int)(request.File.Length / 1024 / 1024),
+            UploadedAt = DateTime.Now,
             UploadedById = userId.Value
         };
 

@@ -10,6 +10,9 @@ CREATE TABLE IF NOT EXISTS FileEntries (
     FileName TEXT NOT NULL,
     ContentType TEXT NOT NULL,
     Path TEXT NOT NULL,
+    FileType TEXT NOT NULL,
+    Size INTEGER NOT NULL,
+    UploadedAt DATETIME NOT NULL,
     UploadedById INTEGER NOT NULL,
     FOREIGN KEY (UploadedById) REFERENCES Users(Id)
 );

@@ -15,6 +15,10 @@ public class FileEntry
     public string Path { get; set; } = default!;
     [MaxLength(16)]
     public Guid FileUrl { get; set; } = default!;
+    [MaxLength(16)]
+    public string FileType { get; set; } = default!;
+    public int Size { get; set; }
+    public DateTime UploadedAt { get; set; }
 
     [ForeignKey(nameof(UploadedBy))]
     public int UploadedById { get; set; }
