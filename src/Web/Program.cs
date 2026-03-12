@@ -11,10 +11,17 @@ builder.Services.AddAuthServices(builder.Configuration);
 
 var app = builder.Build();
 
-using (var scope = app.Services.CreateScope())
+try
 {
-    var initializer = scope.ServiceProvider.GetRequiredService<DataBaseInitializer>();
-    await initializer.InitializeAsync();
+    using var scope = app.Services.CreateScope();
+    var dbInit = scope.ServiceProvider.GetRequiredService<DataBaseInitializer>();
+    await dbInit.InitializeAsync();
+}
+catch (Exception ex)
+{
+    var logger = app.Services.GetRequiredService<ILogger<Program>>();
+    logger.LogCritical(ex, "Проблема с инициализацией базы данных");
+    throw;
 }
 
 if (!app.Environment.IsDevelopment())

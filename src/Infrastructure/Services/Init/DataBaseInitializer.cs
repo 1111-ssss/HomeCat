@@ -26,7 +26,7 @@ public class DataBaseInitializer
         _defaultAdmins = configuration.GetSection("DefaultAdmins")
             ?? throw new ArgumentNullException(nameof(configuration));
 
-        _database = configuration.GetSection("Database")
+        _database = configuration.GetSection("ConnectionStrings")
             ?? throw new ArgumentNullException(nameof(configuration));
 
         _userRepository = userRepository;
@@ -36,17 +36,13 @@ public class DataBaseInitializer
 
     public async Task InitializeAsync()
     {
-        var dbPath = _database["Path"];
-        if (!File.Exists(dbPath))
-        {
-            using var connection = new SqliteConnection($"Data Source={dbPath}");
-            connection.Open();
+        using var connection = new SqliteConnection(_database["DefaultConnection"]);
+        await connection.OpenAsync();
 
-            var sql = await File.ReadAllTextAsync("../init-db.sql");
-            using var command = connection.CreateCommand();
-            command.CommandText = sql;
-            await command.ExecuteNonQueryAsync();
-        }
+        var sql = await File.ReadAllTextAsync("init-db.sql");
+        using var command = connection.CreateCommand();
+        command.CommandText = sql;
+        await command.ExecuteNonQueryAsync();
 
         foreach (var user in _defaultAdmins.GetChildren()) {
             var login = user["Login"];
