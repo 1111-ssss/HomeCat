@@ -20,6 +20,9 @@ public static class InfrastructureExtensions
         // OpenApi
         services.AddOpenApi();
 
+        // Init
+        services.AddScoped<DataBaseInitializer>();
+
         // Auth
         services.AddScoped<ICurrentUserService, CurrentUserService>();
         services.AddScoped<IJwtGeneratorService, JwtGeneratorService>();
@@ -31,9 +34,6 @@ public static class InfrastructureExtensions
         //Repositories
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IFileEntryRepository, FileEntryRepository>();
-        
-        // AdminInitializer
-        services.AddScoped<DataBaseInitializer>();
 
         return services;
     }
