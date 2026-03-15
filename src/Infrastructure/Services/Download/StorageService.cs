@@ -24,7 +24,7 @@ public class StorageService : IStorageService
     public Result<FileStream> GetFile(string path)
     {
         if (File.Exists(path))
-            return Result<FileStream>.Success(new FileStream(path, FileMode.Open));
+            return Result<FileStream>.Success(new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read));
 
         return Result.Failed(ErrorCode.NotFoundOnServer, "Файл не найден по серверной ошибке");
     }
@@ -40,12 +40,12 @@ public class StorageService : IStorageService
         string path = Path.Combine(_fileStorageSection.Path, subPath);
         Directory.CreateDirectory(path);
 
-        string fileName = $"{DateTime.Now.ToShortDateString()}_{file.FileName}_{Guid.NewGuid()}";
+        string fileName = $"{DateTime.Now.ToShortDateString()}_{Guid.NewGuid()}";
         string fullPath = Path.Combine(path, fileName);
         
         try
         {
-            await using var destination = new FileStream(fullPath, FileMode.CreateNew, FileAccess.Write, FileShare.None);
+            await using var destination = new FileStream(fullPath, FileMode.CreateNew, FileAccess.Write, FileShare.Read);
             await file.CopyToAsync(destination);
 
             return Result<string>.Success(fullPath);

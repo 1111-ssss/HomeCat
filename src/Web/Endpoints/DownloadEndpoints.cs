@@ -17,8 +17,7 @@ public static class DownloadEndpoints
             .WithName("Get File")
             .WithSummary("Получение файла")
             .WithDescription("Позволяет пользователю загрузить файл по ссылке")
-            .Accepts<GetFileRequest>("application/json")
-            .Produces<FileStream>(StatusCodes.Status200OK)
+            .Produces<FileStream>(StatusCodes.Status200OK, "audio/mpeg")
             .Produces<ErrorResponse>(StatusCodes.Status400BadRequest)
             .Produces<ErrorResponse>(StatusCodes.Status500InternalServerError);
 
@@ -36,13 +35,13 @@ public static class DownloadEndpoints
     }
     private static async Task<IResult> GetFileAsync(
         [FromServices] GetFileHandler handler,
-        [FromBody] GetFileRequest request,
+        [FromQuery] string url,
         CancellationToken ct
     )
     {
-        var result = await handler.Handle(request, ct);
+        var result = await handler.Handle(new GetFileRequest(url), ct);
 
-        return result.ToApiResult();
+        return result.ToApiFileResult();
     }
 
     private static async Task<IResult> UploadFileAsync(

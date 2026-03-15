@@ -31,13 +31,28 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+app.UseStatusCodePages(async context =>
+{
+    var response = context.HttpContext.Response;
+
+    if (response.StatusCode == StatusCodes.Status401Unauthorized)
+    {
+        response.Redirect("/Error/Unauthorized");
+    }
+    else if (response.StatusCode == StatusCodes.Status403Forbidden)
+    {
+        response.Redirect("/Error/403");
+    }
+});
+
 app.UseHttpsRedirection();
 
 app.UseRouting();
-app.UseCustomMiddleware();
 
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapEndpoints();
+app.UseCustomMiddleware();
 
 app.MapStaticAssets();
 app.MapRazorPages()

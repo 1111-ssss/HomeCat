@@ -1,4 +1,5 @@
 homecat.db
+src/Web/FileStorage
 
 # Created by https://www.toptal.com/developers/gitignore/api/visualstudiocode,aspnetcore
 # Edit at https://www.toptal.com/developers/gitignore?templates=visualstudiocode,aspnetcore

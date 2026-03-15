@@ -5,7 +5,7 @@ using Domain.Model.Result;
 
 namespace Application.Handlers.Download.GetFile;
 
-public class GetFileHandler : IHandler<GetFileRequest, FileStream>
+public class GetFileHandler : IHandler<GetFileRequest, GetFileResponse>
 {
     private readonly IStorageService _storageService;
     private readonly IFileEntryRepository _fileEntryRepository;
@@ -19,7 +19,7 @@ public class GetFileHandler : IHandler<GetFileRequest, FileStream>
         _fileEntryRepository = fileEntryRepository;
     }
 
-    public async Task<Result<FileStream>> Handle(GetFileRequest request, CancellationToken ct)
+    public async Task<Result<GetFileResponse>> Handle(GetFileRequest request, CancellationToken ct)
     {
         var fileResult = await _fileEntryRepository.GetByFileUrl(request.Url);
         if (fileResult == null)
@@ -29,6 +29,10 @@ public class GetFileHandler : IHandler<GetFileRequest, FileStream>
         if (!result.IsSuccess)
             return (Result)result;
 
-        return Result<FileStream>.Success(result.Value);
+        return Result<GetFileResponse>.Success(new GetFileResponse(
+            result.Value,
+            fileResult.ContentType,
+            fileResult.FileName
+        ));
     }
 }

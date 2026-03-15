@@ -23,10 +23,18 @@ public class CurrentUserService : ICurrentUserService
     public string? GetUsername() =>
         User?.FindFirst(JwtRegisteredClaimNames.UniqueName)?.Value;
 
-    public int? GetUserId() => int.TryParse(
-        User?.FindFirst(JwtRegisteredClaimNames.Sub)?.Value,
-        out var id
-    ) ? id : null;
+    public int? GetUserId()
+    {
+        var subClaim = User?.FindFirst(JwtRegisteredClaimNames.Sub)?.Value;
+        if (int.TryParse(subClaim, out var id))
+            return id;
+
+        var nameIdClaim = User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (int.TryParse(nameIdClaim, out var id2))
+            return id2;
+
+        return null;
+    }
     public string? GetUserIp() => 
         _httpContextAccessor.HttpContext?.Connection.RemoteIpAddress?.ToString();
     public bool IsAdmin() => 

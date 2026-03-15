@@ -13,8 +13,8 @@ public class FileEntry
     public string ContentType { get; set; } = default!;
     [MaxLength(255)]
     public string Path { get; set; } = default!;
-    [MaxLength(16)]
-    public Guid FileUrl { get; set; } = default!;
+    [MaxLength(255)]
+    public string FileUrl { get; set; } = default!;
     [MaxLength(16)]
     public string FileType { get; set; } = default!;
     public int Size { get; set; }

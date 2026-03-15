@@ -19,7 +19,10 @@ public class FileEntryRepository : IFileEntryRepository
     public async Task<int> AddAsync(FileEntry entry)
     {
         using var connection = new SqliteConnection(_connectionString);
-        var sql = @"INSERT INTO FileEntries (FileName, ContentType, Path, UploadedById) VALUES (@FileName, @ContentType, @Path, @UploadedById); SELECT last_insert_rowid();";
+        var sql = @"INSERT INTO FileEntries 
+            (FileName, ContentType, Path, FileUrl, FileType, Size, UploadedAt, UploadedById)
+            VALUES (@FileName, @ContentType, @Path, @FileUrl, @FileType, @Size, @UploadedAt, @UploadedById);
+            SELECT last_insert_rowid();";
         return await connection.ExecuteScalarAsync<int>(sql, entry);
     }
 
@@ -60,7 +63,7 @@ public class FileEntryRepository : IFileEntryRepository
     public async Task<FileEntry?> GetByFileUrl(string url)
     {
         using var connection = new SqliteConnection(_connectionString);
-        var sql = "SELECT * FROM FileEntries WHERE FileUrl = @Url";
+        var sql = "SELECT * FROM FileEntries WHERE FileUrl = @Url LIMIT 1";
         return await connection.QuerySingleOrDefaultAsync<FileEntry>(sql, new { Url = url });
     }
 }

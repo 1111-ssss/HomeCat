@@ -1,3 +1,5 @@
+using Application.Handlers.Download.GetFile;
+using Application.Handlers.Download.UploadFile;
 using Domain.Model.Result;
 
 public static class ResultExtensions
@@ -29,8 +31,23 @@ public static class ResultExtensions
         };
     }
 
+    public static IResult ToApiFileResult(this Result<GetFileResponse> result) {
+        if (result.IsSuccess) {
+            var value = result.Value;
+            return Results.File(value.FileStream, value.ContentType, value.FileName);
+        }
+        
+        return ((IResultBase)result).ToApiResult();
+    }
     public static IResult ToApiResult<T>(this Result<T> result)
     {
+        if (result.IsSuccess && result.Value is FileStream fileStream)
+        {
+            var contentType = "application/octet-stream";
+            var fileName = "downloaded.file";
+            return Results.File(fileStream, contentType, fileName);
+        }
+
         if (result.IsSuccess)
             return Results.Ok(result.Value);
 

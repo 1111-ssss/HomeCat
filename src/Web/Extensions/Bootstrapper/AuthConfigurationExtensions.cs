@@ -13,10 +13,27 @@ public static class AuthConfigurationExtensions
         var key = Encoding.UTF8.GetBytes(jwtSettings["Key"] ?? throw new ArgumentNullException("Jwt:Key пустой в конфигурации"));
 
         services.AddAuthentication(options =>
-        {
-            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-        })
+            {
+                options.DefaultScheme = "HomeCatAuth";
+                options.DefaultAuthenticateScheme = "HomeCatAuth";
+                options.DefaultChallengeScheme = "HomeCatAuth";
+            })
+            .AddPolicyScheme("HomeCatAuthOrJwt", "Cookie", options =>
+            {
+                options.ForwardDefaultSelector = context =>
+                {
+                    var hasBearer = context.Request.Headers["Authorization"].ToString().StartsWith("Bearer ");
+                    return hasBearer ? JwtBearerDefaults.AuthenticationScheme : "HomeCatAuth";
+                };
+            })
+            .AddCookie("HomeCatAuth", options =>
+            {
+                options.LoginPath = "/Account/Login";
+                options.LogoutPath = "/Account/Logout";
+                options.AccessDeniedPath = "/Error/403";
+                options.Cookie.Name = "HomeCatAuth";
+            })
+
         .AddJwtBearer(options =>
         {
             options.TokenValidationParameters = new TokenValidationParameters

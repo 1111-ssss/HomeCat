@@ -29,7 +29,7 @@ public class UploadFileHandler : IHandler<UploadFileRequest, FileResponse>
         var saveResult = await _storageService.SaveFile(SaveFileTypeEnum.MusicFile, request.File);
         if (!saveResult.IsSuccess)
             return (Result)saveResult;
-        
+
         var userId = _currentUserService.GetUserId();
         if (userId == null)
             return Result.Failed(ErrorCode.Unauthorized, "Не авторизован");
@@ -39,6 +39,7 @@ public class UploadFileHandler : IHandler<UploadFileRequest, FileResponse>
             FileName = request.File.FileName,
             ContentType = request.File.ContentType,
             Path = saveResult.Value,
+            FileUrl = saveResult.Value,
             FileType = "Music",
             Size = (int)(request.File.Length / 1024 / 1024),
             UploadedAt = DateTime.Now,
@@ -51,9 +52,14 @@ public class UploadFileHandler : IHandler<UploadFileRequest, FileResponse>
         }
         catch (Exception e)
         {
+            Console.WriteLine($"DB error: {e.Message}\n{e.StackTrace}");
             return Result.Failed(ErrorCode.DatabaseError, "Ошибка сохранения в базу данных");
         }
 
-        throw new NotImplementedException();
+        return Result<FileResponse>.Success(new FileResponse(
+            saveResult.Value,
+            request.File.ContentType,
+            request.File.FileName
+        ));
     }
 }
