@@ -27,7 +27,7 @@ public static class InfrastructureExtensions
         services.AddScoped<ICurrentUserService, CurrentUserService>();
         services.AddScoped<IJwtGeneratorService, JwtGeneratorService>();
         services.AddScoped<IPasswordHashingService, PasswordHashingService>();
-        services.AddScoped<IRadioService, RadioService>();
+        services.AddSingleton<IRadioService, RadioService>();
         services.AddScoped<IStorageService, StorageService>();
         services.AddScoped<IAudioUtilsService, AudioUtilsService>();
 
