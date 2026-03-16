@@ -31,7 +31,7 @@ public static class MusicEndpoints
             .Produces<ErrorResponse>(StatusCodes.Status400BadRequest)
             .Produces<ErrorResponse>(StatusCodes.Status500InternalServerError);
 
-        group.MapGet("/play", PlayRadioAsync)
+        group.MapPost("/play", PlayRadioAsync)
             .WithName("PlayMusic")
             .WithSummary("Проигрывание музыки")
             .WithDescription("Позволяет пользователю проиграть музыку из списка загруженных на сервере")
