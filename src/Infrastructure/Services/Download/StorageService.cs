@@ -37,10 +37,13 @@ public class StorageService : IStorageService
             SaveFileTypeEnum.File => "files",
             _ => "unknown"
         };
+
+        var extension = Path.GetExtension(file.FileName);
+
         string path = Path.Combine(_fileStorageSection.Path, subPath);
         Directory.CreateDirectory(path);
 
-        string fileName = $"{DateTime.Now.ToShortDateString()}_{Guid.NewGuid()}";
+        string fileName = $"{DateTime.Now.ToShortDateString()}_{Guid.NewGuid()}{extension}";
         string fullPath = Path.Combine(path, fileName);
         
         try
