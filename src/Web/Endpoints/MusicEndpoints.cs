@@ -44,11 +44,10 @@ public static class MusicEndpoints
     }
     private static async Task<IResult> SyncAsync(
         [FromServices] SyncMusicHandler handler,
-        [FromBody] SyncMusicRequest request,
         CancellationToken ct
     )
     {
-        var result = await handler.Handle(request, ct);
+        var result = await handler.Handle(new SyncMusicRequest(), ct);
 
         return result.ToApiResult();
     }
