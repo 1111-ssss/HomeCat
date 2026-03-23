@@ -17,3 +17,15 @@ CREATE TABLE IF NOT EXISTS FileEntries (
     UploadedById INTEGER NOT NULL,
     FOREIGN KEY (UploadedById) REFERENCES Users(Id)
 );
+
+CREATE TABLE IF NOT EXISTS AudioFiles (
+    Id INTEGER PRIMARY KEY AUTOINCREMENT,
+    Name TEXT NOT NULL,
+    Author TEXT NOT NULL,
+    Album TEXT,
+    Duration INTEGER NOT NULL,
+    IconUrl TEXT,
+    FileUrl TEXT NOT NULL,
+    FOREIGN KEY (IconUrl) References FileEntries(FileUrl),
+    FOREIGN KEY (FileUrl) References FileEntries(FileUrl)
+);
