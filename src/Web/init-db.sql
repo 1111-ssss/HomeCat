@@ -56,3 +56,60 @@ CREATE INDEX IF NOT EXISTS idx_audiofiles_albumartid ON AudioFiles(AlbumArtId);
 
 --     FOREIGN KEY (AudioFileId) REFERENCES AudioFiles(Id) ON DELETE CASCADE,
 -- )
+
+-- =============================================
+-- НОВЫЕ ТАБЛИЦЫ ДЛЯ ПЛЕЙЛИСТОВ И ОЧЕРЕДИ
+-- =============================================
+
+-- 1. Плейлисты (каждый пользователь может создавать свои плейлисты)
+CREATE TABLE IF NOT EXISTS Playlists (
+    Id INTEGER PRIMARY KEY AUTOINCREMENT,
+    Name TEXT NOT NULL,
+    CreatedById INTEGER NOT NULL,
+    CreatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UpdatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    IsPublic INTEGER NOT NULL DEFAULT 0,
+    CHECK (IsPublic IN (0, 1)),
+    FOREIGN KEY (CreatedById) REFERENCES Users(Id) ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS idx_playlists_createdby ON Playlists(CreatedById);
+CREATE INDEX IF NOT EXISTS idx_playlists_name ON Playlists(Name);
+
+
+CREATE TABLE IF NOT EXISTS PlaylistEntries (
+    Id INTEGER PRIMARY KEY AUTOINCREMENT,
+    PlaylistId INTEGER NOT NULL,
+    AudioFileId INTEGER NOT NULL,
+    Position INTEGER NOT NULL,
+    AddedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (PlaylistId) REFERENCES Playlists(Id) ON DELETE CASCADE,
+    FOREIGN KEY (AudioFileId) REFERENCES AudioFiles(Id) ON DELETE RESTRICT,
+    
+    UNIQUE(PlaylistId, Position)
+);
+
+CREATE INDEX IF NOT EXISTS idx_playlistentries_playlistid ON PlaylistEntries(PlaylistId);
+CREATE INDEX IF NOT EXISTS idx_playlistentries_audifileid ON PlaylistEntries(AudioFileId);
+CREATE INDEX IF NOT EXISTS idx_playlistentries_position ON PlaylistEntries(Position);
+
+
+CREATE TABLE IF NOT EXISTS QueueEntries (
+    Id INTEGER PRIMARY KEY AUTOINCREMENT,
+    UserId INTEGER NOT NULL,
+    AudioFileId INTEGER NOT NULL,
+    Position INTEGER NOT NULL,
+    AddedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    IsCurrent INTEGER NOT NULL DEFAULT 0,
+    CHECK (IsCurrent IN (0, 1)),
+    
+    FOREIGN KEY (UserId) REFERENCES Users(Id) ON DELETE CASCADE,
+    FOREIGN KEY (AudioFileId) REFERENCES AudioFiles(Id) ON DELETE RESTRICT,
+    
+    UNIQUE(UserId, Position)
+);
+
+CREATE INDEX IF NOT EXISTS idx_queueentries_userid ON QueueEntries(UserId);
+CREATE INDEX IF NOT EXISTS idx_queueentries_position ON QueueEntries(Position);
+CREATE INDEX IF NOT EXISTS idx_queueentries_current ON QueueEntries(IsCurrent) WHERE IsCurrent = 1;
